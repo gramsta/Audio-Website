@@ -1,8 +1,54 @@
-ls
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Sharing Platform</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .upload-box {
+            border: 2px dashed #ccc;
+            padding: 50px;
+            margin: 20px;
+            cursor: pointer;
+        }
+        .upload-box:hover {
+            border-color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload Your Audio</h1>
+    <div class="upload-box">
+        <form id="uploadForm" method="POST" enctype="multipart/form-data" action="/upload">
+            <input type="file" name="file" id="fileInput" required>
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+    <div id="uploadResult"></div>
+    <script>
+        const form = document.getElementById('uploadForm');
+        const resultDiv = document.getElementById('uploadResult');
 
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(form);
 
-
-
-
-
-kill %1
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+                const result = await response.json();
+                resultDiv.innerHTML = `<p>${result.message}</p><p>Uploaded file: ${result.file.filename}</p>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<p>Error uploading file.</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
